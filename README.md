@@ -10,8 +10,7 @@ Twitterのいいねをすべて削除(解除)するツールです
 
 しばらく経ってからもう一度起動し直すことをおすすめします
 
-##Download
-
+## Download
 [WindowsEXEのみ](https://github.com/CubeZeero/Twitter-Favorites-Remover/releases/tag/1.0)
 
 ### License
