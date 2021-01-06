@@ -23,21 +23,30 @@ verifier = input('\nPlease authenticate your account and get a PIN\nアカウン
 auth.get_access_token(verifier)
 
 auth.set_access_token(auth.access_token, auth.access_token_secret)
+
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True, retry_delay=10800)
+
 screen_name = api.me().screen_name
 print('\nThe following users have been authenticated\n以下のユーザーが認証されました\n@' + screen_name + '\n')
 
-user　=　api.get_user(screen_name = screen_name)
+user = api.get_user(screen_name = screen_name)
+
 print('Number of favorite\nいいね数\n' + str(user.favourites_count))
 favorites_count_tmp = user.favourites_count
 
 print('\n*!W A R N I N G!*\nAre you sure you want to remove all your favorites?\nいいねをすべて削除しますがよろしいですか？')
 yorn = input('y/n\n').strip()
 
-if yorn == 'n':
-    print('\nExit the tool\nツールを終了します')
-    time.sleep(2)
-    sys.exit()
+while True:
+    if yorn == 'n' or yorn == 'N':
+        print('\nExit the tool\nツールを終了します')
+        time.sleep(2)
+        sys.exit()
+    elif yorn == 'y' or yorn == 'Y':
+        break
+    else:
+        print('\nPlease enter y or n\nyかnを入力してください')
+        yorn = input('y/n\n').strip()
 
 progress_bar = tqdm(total = favorites_count_tmp)
 progress_bar.set_description('Removing... ')
@@ -48,15 +57,16 @@ while favorites_count_tmp > 0:
         tweets=api.favorites(screen_name=screen_name, count=200, page=page)
 
         for tweet in tweets:
-            
+
             while True:
                 try:
                     api.destroy_favorite(tweet.id)
                     break
-                except TimeoutError:
+                except tweepy.TweepError:
                     pass
 
             progress_bar.update(1)
+            favorites_count_tmp = favorites_count_tmp -1
             time.sleep(0.05)
 
     user = api.get_user(screen_name = screen_name)
